@@ -12,6 +12,7 @@ import NuevoProyecto from "./pages/NuevoProyecto";
 import { ProyectosProvider } from "../context/ProyectosProvider";
 import Proyecto from "./pages/Proyecto";
 import EditarProyecto from "./pages/EditarProyecto";
+import NuevoColaborador from "./pages/NuevoColaborador";
 function App() {
   return (
     <BrowserRouter>
@@ -34,6 +35,10 @@ function App() {
               <Route path="crear-proyecto" element={<NuevoProyecto />} />
               <Route path=":id" element={<Proyecto />} />
               <Route path="editar/:id" element={<EditarProyecto />} />
+              <Route
+                path="nuevo-colaborador/:id"
+                element={<NuevoColaborador />}
+              />
             </Route>
           </Routes>
         </ProyectosProvider>
