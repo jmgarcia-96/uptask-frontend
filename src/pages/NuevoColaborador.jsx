@@ -39,7 +39,7 @@ const NuevoColaborador = () => {
       ) : (
         colaborador?._id && (
           <div className="flex justify-center mt-10">
-            <div className="bg-white py-10 px-5 lg:w-2/3 rounded-lg shadow">
+            <div className="bg-white py-10 px-5 lg:w-3/5 xl:w-2/5 rounded-lg shadow w-full">
               <h2 className="text-center mb-10 text-2xl font-bold">
                 Resultado
               </h2>

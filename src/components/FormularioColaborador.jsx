@@ -23,7 +23,7 @@ const FormularioColaborador = () => {
   const { msg } = alerta;
   return (
     <form
-      className="bg-white py-10 px-5 lg:w-2/3 rounded-lg shadow"
+      className="bg-white py-10 px-5 lg:w-3/5 xl:w-2/5 rounded-lg shadow w-full"
       onSubmit={handleSubmit}
     >
       {msg && <Alerta alerta={alerta} />}

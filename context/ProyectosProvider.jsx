@@ -15,6 +15,7 @@ const ProyectosProvider = ({ children }) => {
     useState(false);
   const [tarea, setTarea] = useState({});
   const [colaborador, setColaborador] = useState({});
+  const [buscador, setBuscador] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,9 +44,9 @@ const ProyectosProvider = ({ children }) => {
 
   const mostrarAlerta = (alerta) => {
     setAlerta(alerta);
-    setTimeout(() => {
-      setAlerta({});
-    }, 5000);
+    // setTimeout(() => {
+    //   setAlerta({});
+    // }, 5000);
   };
 
   const submitProyecto = async (proyecto) => {
@@ -124,7 +125,6 @@ const ProyectosProvider = ({ children }) => {
 
   const obtenerProyecto = async (id) => {
     setCargando(true);
-    setAlerta({});
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -137,11 +137,16 @@ const ProyectosProvider = ({ children }) => {
 
       const { data } = await clienteAxios(`/proyectos/${id}`, config);
       setProyecto(data);
+      setAlerta({});
     } catch (error) {
+      navigate("/proyectos");
       setAlerta({
         msg: error.response.data.msg,
         error: true,
       });
+      setTimeout(() => {
+        setAlerta({});
+      }, 3000);
     }
     setCargando(false);
   };
@@ -379,7 +384,6 @@ const ProyectosProvider = ({ children }) => {
   };
 
   const eliminarColaborador = async () => {
-    console.log("Eliminando");
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -419,6 +423,37 @@ const ProyectosProvider = ({ children }) => {
     }
   };
 
+  const completarTarea = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clienteAxios.post(
+        `/tareas/estado/${id}`,
+        {},
+        config
+      );
+      const proyectoActualizado = { ...proyecto };
+      proyectoActualizado.tareas = proyectoActualizado.tareas.map(
+        (tareaState) => (tareaState._id === id ? data : tareaState)
+      );
+      setTarea({});
+      setAlerta({});
+    } catch (error) {
+      console.log(error.response.data.msg);
+    }
+  };
+
+  const handleBuscador = () => {
+    setBuscador(true);
+  };
+
   return (
     <ProyectosContext.Provider
       value={{
@@ -444,6 +479,9 @@ const ProyectosProvider = ({ children }) => {
         modalEliminarColaborador,
         handleModalEliminarColaborador,
         eliminarColaborador,
+        completarTarea,
+        handleBuscador,
+        buscador,
       }}
     >
       {children}
