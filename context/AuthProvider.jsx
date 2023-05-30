@@ -8,6 +8,9 @@ const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({});
   const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
+  const cerrarSesionAuth = () => {
+    setAuth({});
+  };
 
   useEffect(() => {
     const autenticarUsuario = async () => {
@@ -36,8 +39,9 @@ const AuthProvider = ({ children }) => {
 
     return () => autenticarUsuario();
   }, []);
+
   return (
-    <AuthContext.Provider value={{ auth, setAuth, cargando }}>
+    <AuthContext.Provider value={{ auth, setAuth, cargando, cerrarSesionAuth }}>
       {children}
     </AuthContext.Provider>
   );

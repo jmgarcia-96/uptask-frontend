@@ -4,14 +4,24 @@ import { useEffect, useState } from "react";
 import ModalFormularioTarea from "../components/ModalFormularioTarea";
 import Tarea from "../components/Tarea";
 import ModalEliminarTarea from "../components/ModalEliminarTarea";
-import Alerta from "../components/Alerta";
 import Colaborador from "../components/Colaborador";
 import ModalEliminarColaborador from "../components/ModalEliminarColaborador";
 import useAdmin from "../../hooks/useAdmin";
+import io from "socket.io-client";
+let socket;
 
 const Proyecto = () => {
-  const { obtenerProyecto, proyecto, cargando, handleModalNuevaTarea, alerta } =
-    useProyectos();
+  const {
+    obtenerProyecto,
+    proyecto,
+    cargando,
+    handleModalNuevaTarea,
+    alerta,
+    submitTareaProyecto,
+    submitEliminarTareaProyecto,
+    submitEditarTareaProyecto,
+    submitCambiarEstadoTarea,
+  } = useProyectos();
   const admin = useAdmin();
   const params = useParams();
   const { id } = params;
@@ -20,6 +30,37 @@ const Proyecto = () => {
   useEffect(() => {
     return () => obtenerProyecto(id);
   }, []);
+
+  useEffect(() => {
+    socket = io(import.meta.env.VITE_BACKEND_URL);
+    socket.emit("abrir proyecto", id);
+  }, []);
+
+  useEffect(() => {
+    socket.on("tarea-agregada", (tareaNueva) => {
+      if (tareaNueva.proyecto === proyecto._id) {
+        submitTareaProyecto(tareaNueva);
+      }
+    });
+
+    socket.on("tarea-eliminada", (tareaEliminada) => {
+      if (tareaEliminada.proyecto === proyecto._id) {
+        submitEliminarTareaProyecto(tareaEliminada);
+      }
+    });
+
+    socket.on("tarea-actualizada", (tareaActualizada) => {
+      if (tareaActualizada.proyecto._id === proyecto._id) {
+        submitEditarTareaProyecto(tareaActualizada);
+      }
+    });
+
+    socket.on("nuevo-estado", (tareaActualizada) => {
+      if (tareaActualizada.proyecto._id === proyecto._id) {
+        submitCambiarEstadoTarea(tareaActualizada);
+      }
+    });
+  });
 
   const { msg } = alerta;
 
